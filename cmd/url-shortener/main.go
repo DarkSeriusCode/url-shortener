@@ -8,8 +8,8 @@ import (
 	"os"
 
 	"github.com/DarkSeriusCode/url-shortener/internal/handler"
-	"github.com/DarkSeriusCode/url-shortener/internal/storage"
 	"github.com/DarkSeriusCode/url-shortener/internal/service"
+	"github.com/DarkSeriusCode/url-shortener/internal/storage"
 	"github.com/lmittmann/tint"
 )
 

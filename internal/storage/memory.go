@@ -17,10 +17,10 @@ func NewMemoryStorage() *MemoryStorage {
 
 func (s *MemoryStorage) SaveUrl(originURL url.URL, urlID string) {
 	s.urls[urlID] = ShortenedURL{
-		ID: uint64(time.Now().UnixMilli()),
-		originURL: originURL,
-		urlID: urlID,
-		author: nil,
+		ID:        uint64(time.Now().UnixMilli()),
+		OriginURL: originURL,
+		UrlID:     urlID,
+		Author:    nil,
 	}
 }
 

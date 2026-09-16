@@ -3,14 +3,14 @@ package storage
 import "net/url"
 
 type ShortenedURL struct {
-	ID uint64
-	originURL url.URL
-	urlID string
-	author *User
+	ID        uint64
+	OriginURL url.URL
+	UrlID     string
+	Author    *User
 }
 
 type User struct {
-	ID uint64
-	name string
-	password string
+	ID       uint64
+	Name     string
+	Password string
 }

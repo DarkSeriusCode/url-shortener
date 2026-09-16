@@ -1,8 +1,8 @@
 package storage
 
 import (
-	"net/url"
 	"errors"
+	"net/url"
 )
 
 type StorageErr error

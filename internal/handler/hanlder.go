@@ -3,6 +3,7 @@ package handler
 import (
 	"encoding/json"
 	"fmt"
+	"html/template"
 	"log/slog"
 	"net/http"
 	"net/url"
@@ -10,9 +11,13 @@ import (
 	"github.com/DarkSeriusCode/url-shortener/internal/service"
 )
 
+var (
+	indexHTML = template.Must(template.ParseFiles("ui/index.html"))
+)
+
 type AppHandler struct {
 	shortener *service.Shortener
-	mux *http.ServeMux
+	mux       *http.ServeMux
 }
 
 func (h *AppHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
@@ -23,11 +28,12 @@ func NewHandler(shortener *service.Shortener) *AppHandler {
 	mux := http.NewServeMux()
 	h := &AppHandler{
 		shortener: shortener,
-		mux: mux,
+		mux:       mux,
 	}
 
 	mux.HandleFunc("/", h.mainPage)
 	mux.HandleFunc("/shorten", h.shorten)
+	mux.HandleFunc("/{id}", h.resolve)
 
 	return h
 }
@@ -37,7 +43,12 @@ func (h *AppHandler) mainPage(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Not found", http.StatusNotFound)
 		return
 	}
-	w.Write([]byte("Hello world"))
+	if err := indexHTML.Execute(w, nil); err != nil {
+		slog.Error(fmt.Sprintf("/ Error while executing HTML template %s", err))
+		http.Error(w, "Internal server error", http.StatusInternalServerError)
+		return
+	}
+	slog.Info("/")
 }
 
 func (h *AppHandler) shorten(w http.ResponseWriter, r *http.Request) {
@@ -62,7 +73,7 @@ func (h *AppHandler) shorten(w http.ResponseWriter, r *http.Request) {
 	}
 	urlID := h.shortener.Shorten(*originURL)
 
-	resp := URLShortenResp{ ID: urlID }
+	resp := URLShortenResp{ID: urlID}
 	bytes, err := json.Marshal(resp)
 	if err != nil {
 		slog.Error(fmt.Sprintf("/shorten Unable to response %s", err))
@@ -74,4 +85,19 @@ func (h *AppHandler) shorten(w http.ResponseWriter, r *http.Request) {
 		slog.String("url", originURL.String()),
 		slog.String("id", urlID),
 	)
+}
+
+func (h *AppHandler) resolve(w http.ResponseWriter, r *http.Request) {
+	id := r.PathValue("id")
+	shortenedURL, err := h.shortener.Resolve(id)
+	if err != nil {
+		slog.Error(fmt.Sprintf("Not such URL with ID %s", id), slog.String("id", id))
+		http.Error(w, "No such URL ID", http.StatusNotFound)
+		return
+	}
+	slog.Info("/resolve Redirecting",
+		slog.String("url", shortenedURL.OriginURL.String()),
+		slog.String("id", shortenedURL.UrlID),
+	)
+	http.Redirect(w, r, shortenedURL.OriginURL.String(), http.StatusPermanentRedirect)
 }
