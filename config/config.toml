@@ -1,0 +1,10 @@
+[server]
+port = 6969
+env = "local"
+
+[database]
+host = "localhost"
+port = 5432
+user = "Mio"
+password = "MioAkiyama"
+dbname = "shortener"
