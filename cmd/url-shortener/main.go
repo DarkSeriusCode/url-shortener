@@ -8,6 +8,8 @@ import (
 	"os"
 
 	"github.com/DarkSeriusCode/url-shortener/internal/handler"
+	"github.com/DarkSeriusCode/url-shortener/internal/storage"
+	"github.com/DarkSeriusCode/url-shortener/internal/service"
 	"github.com/lmittmann/tint"
 )
 
@@ -41,11 +43,14 @@ func main() {
 	// Logger
 	setupLogger(cfg.Server.Env)
 
+	storage := storage.NewMemoryStorage()
+	service := service.NewShortener(storage)
+
 	// Handler
 	addr := fmt.Sprintf(":%d", cfg.Server.Port)
 	srv := &http.Server{
 		Addr:    addr,
-		Handler: handler.NewHandler(),
+		Handler: handler.NewHandler(service),
 	}
 
 	slog.Info(fmt.Sprintf("Running %s server on %s", cfg.Server.Env, srv.Addr))
