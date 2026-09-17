@@ -10,23 +10,43 @@ import (
 	"github.com/DarkSeriusCode/url-shortener/internal/handler"
 	"github.com/DarkSeriusCode/url-shortener/internal/service"
 	"github.com/DarkSeriusCode/url-shortener/internal/storage"
+	"github.com/DarkSeriusCode/url-shortener/internal/config"
 	"github.com/lmittmann/tint"
 )
 
-func setupLogger(env ServerEnv) {
+func setupLogger(env config.ServerEnv) {
 	var logger *slog.Logger
 
 	switch env {
-	case EnvLocal:
+	case config.EnvLocal:
 		opt := tint.Options{
 			Level: slog.LevelDebug,
 		}
 		logger = slog.New(tint.NewTextHandler(os.Stdout, &opt))
-	case EnvProd:
+	case config.EnvProd:
 		logger = slog.New(slog.NewJSONHandler(os.Stdout, nil))
 	}
 
 	slog.SetDefault(logger)
+}
+
+func initStorage(cfg *config.ServerConfig) storage.Storage {
+	var s storage.Storage
+	var err error
+
+	switch cfg.Server.Storage {
+	case config.StorageMemory:
+		s = storage.NewMemoryStorage()
+		err = nil
+	case config.StoragePostgres:
+		s, err = storage.NewPostgresStorage(cfg)
+	}
+
+	if err != nil {
+		panic(err)
+	}
+	slog.Info(fmt.Sprintf("Using %s as a storage", cfg.Server.Storage))
+	return s
 }
 
 func main() {
@@ -35,7 +55,7 @@ func main() {
 	flag.Parse()
 
 	// Config
-	cfg, err := LoadConfigFromFile(*configPath)
+	cfg, err := config.LoadConfigFromFile(*configPath)
 	if err != nil {
 		panic(err)
 	}
@@ -43,7 +63,7 @@ func main() {
 	// Logger
 	setupLogger(cfg.Server.Env)
 
-	storage := storage.NewMemoryStorage()
+	storage := initStorage(cfg)
 	service := service.NewShortener(storage)
 
 	// Handler

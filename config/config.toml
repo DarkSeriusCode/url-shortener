@@ -1,6 +1,7 @@
 [server]
 port = 6969
 env = "local"
+storage = "postgres"
 
 [database]
 host = "localhost"

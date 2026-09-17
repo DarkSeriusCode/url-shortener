@@ -1,4 +1,4 @@
-package main
+package config
 
 import (
 	"os"
@@ -10,6 +10,7 @@ type ServerConfig struct {
 	Server struct {
 		Port uint16
 		Env  ServerEnv
+		Storage StorageType
 	}
 
 	Database struct {
@@ -34,8 +35,13 @@ func LoadConfigFromFile(filePath string) (*ServerConfig, error) {
 }
 
 type ServerEnv string
-
 const (
 	EnvLocal ServerEnv = "local"
 	EnvProd  ServerEnv = "prod"
+)
+
+type StorageType string
+const (
+	StorageMemory StorageType = "memory"
+	StoragePostgres StorageType = "postgres"
 )

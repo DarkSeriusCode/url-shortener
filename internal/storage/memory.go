@@ -15,13 +15,14 @@ func NewMemoryStorage() *MemoryStorage {
 	}
 }
 
-func (s *MemoryStorage) SaveUrl(originURL url.URL, urlID string) {
+func (s *MemoryStorage) SaveUrl(originURL url.URL, urlID string) error {
 	s.urls[urlID] = ShortenedURL{
 		ID:        uint64(time.Now().UnixMilli()),
-		OriginURL: originURL,
+		OriginURL: &originURL,
 		UrlID:     urlID,
 		Author:    nil,
 	}
+	return nil
 }
 
 func (s *MemoryStorage) GetUrl(urlID string) (*ShortenedURL, error) {

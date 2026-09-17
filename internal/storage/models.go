@@ -4,7 +4,7 @@ import "net/url"
 
 type ShortenedURL struct {
 	ID        uint64
-	OriginURL url.URL
+	OriginURL *url.URL
 	UrlID     string
 	Author    *User
 }
@@ -14,3 +14,5 @@ type User struct {
 	Name     string
 	Password string
 }
+
+// TODO: Add session model

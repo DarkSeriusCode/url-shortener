@@ -14,6 +14,7 @@ var (
 // TODO: Use UUID when I back home
 
 type Storage interface {
-	SaveUrl(originURL url.URL, urlID string)
+	NewUser(name string, password string) error
+	SaveUrl(originURL url.URL, urlID string) error
 	GetUrl(urlID string) (*ShortenedURL, error)
 }

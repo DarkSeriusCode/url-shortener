@@ -71,7 +71,12 @@ func (h *AppHandler) shorten(w http.ResponseWriter, r *http.Request) {
 		slog.Error("/shorten Invalid URL to short", slog.String("url", reqJSON.URL))
 		return
 	}
-	urlID := h.shortener.Shorten(*originURL)
+	urlID, err := h.shortener.Shorten(*originURL)
+	if err != nil {
+		http.Error(w, "Databse error", http.StatusInternalServerError)
+		slog.Error(fmt.Sprintf("/shorten Database error: %s", err))
+		return
+	}
 
 	resp := URLShortenResp{ID: urlID}
 	bytes, err := json.Marshal(resp)
