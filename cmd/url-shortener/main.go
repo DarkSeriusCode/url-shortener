@@ -7,10 +7,10 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/DarkSeriusCode/url-shortener/internal/config"
 	"github.com/DarkSeriusCode/url-shortener/internal/handler"
 	"github.com/DarkSeriusCode/url-shortener/internal/service"
 	"github.com/DarkSeriusCode/url-shortener/internal/storage"
-	"github.com/DarkSeriusCode/url-shortener/internal/config"
 	"github.com/lmittmann/tint"
 )
 

@@ -1,13 +1,12 @@
 package service
 
 import (
-	"crypto/rand"
 	"log/slog"
 	"math/big"
 	"net/url"
-	"time"
 
 	"github.com/DarkSeriusCode/url-shortener/internal/storage"
+	"github.com/google/uuid"
 	"github.com/mattheath/base62"
 )
 
@@ -22,13 +21,13 @@ func NewShortener(s storage.Storage) *Shortener {
 }
 
 func (s *Shortener) Shorten(originURL url.URL) (string, error) {
-	// TODO: Use UUID!!!!!
-	timestamp := big.NewInt(time.Now().UnixMilli())
-	noice, err := rand.Int(rand.Reader, timestamp)
+	id, err := uuid.NewRandom()
 	if err != nil {
-		slog.Error("Unexpected error with noice generation")
+		slog.Error("Error generating UUID!")
+		return "", err
 	}
-	urlID := base62.EncodeBigInt(timestamp.Add(timestamp, noice))
+	n := new(big.Int).SetBytes(id[:])
+	urlID := base62.EncodeBigInt(n)
 	err = s.appStorage.SaveUrl(originURL, urlID)
 	return urlID, err
 }

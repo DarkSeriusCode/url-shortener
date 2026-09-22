@@ -14,12 +14,12 @@ type PostgresStorage struct {
 
 func NewPostgresStorage(cfg *config.ServerConfig) (*PostgresStorage, error) {
 	dbCfg := pq.Config{
-		Host: cfg.Database.Host,
-		Port: cfg.Database.Port,
-		User: cfg.Database.User,
+		Host:     cfg.Database.Host,
+		Port:     cfg.Database.Port,
+		User:     cfg.Database.User,
 		Password: cfg.Database.Password,
 		Database: cfg.Database.Dbname,
-		SSLMode: "disable",
+		SSLMode:  "disable",
 	}
 
 	conn, err := pq.NewConnectorConfig(dbCfg)
@@ -44,31 +44,10 @@ func NewPostgresStorage(cfg *config.ServerConfig) (*PostgresStorage, error) {
 }
 
 func (s *PostgresStorage) initTables() error {
-	_, err := s.db.Exec(`CREATE TABLE IF NOT EXISTS users (
-		id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-		name TEXT NOT NULL UNIQUE,
-		password TEXT NOT NULL
-	)`)
-	if err != nil {
-		return err
-	}
-
-	_, err = s.db.Exec(`CREATE TABLE IF NOT EXISTS urls (
+	_, err := s.db.Exec(`CREATE TABLE IF NOT EXISTS urls (
 		id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
 		url TEXT NOT NULL,
-		url_id TEXT NOT NULL,
-		author_id BIGINT NOT NULL REFERENCES users(id) ON DELETE CASCADE
-	)`)
-	if err != nil {
-		return err
-	}
-
-	_, err = s.db.Exec(`CREATE TABLE IF NOT EXISTS sessions (
-		id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-		token_hash TEXT NOT NULL UNIQUE,
-		owner_id BIGINT NOT NULL REFERENCES users(id),
-		expires_at TIMESTAMPTZ NOT NULL,
-		created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+		url_id TEXT NOT NULL
 	)`)
 	return err
 }
@@ -77,13 +56,8 @@ func (s *PostgresStorage) Close() {
 	s.db.Close()
 }
 
-func (s *PostgresStorage) NewUser(name string, password string) error {
-	_, err := s.db.Exec(`INSERT INTO users (name, password) VALUES ($1, $2)`, name, password)
-	return err
-}
-
 func (s *PostgresStorage) SaveUrl(originURL url.URL, urlID string) error {
-	_, err := s.db.Exec(`INSERT INTO urls (url, url_id, author_id) VALUES ($1, $2, 0)`,
+	_, err := s.db.Exec(`INSERT INTO urls (url, url_id) VALUES ($1, $2)`,
 		originURL.String(), urlID)
 	return err
 }

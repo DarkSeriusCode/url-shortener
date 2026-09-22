@@ -1,6 +1,8 @@
 package storage
 
-import "net/url"
+import (
+	"net/url"
+)
 
 type ShortenedURL struct {
 	ID        uint64
