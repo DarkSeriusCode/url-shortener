@@ -1,0 +1,37 @@
+services:
+  service:
+    build:
+      context: .
+    container_name: url-shortener
+    ports:
+      - 6969:6969
+    volumes:
+      - ./config:/app/config
+      - ./ui:/app/ui
+    depends_on:
+      - database
+
+  database:
+    image: postgres:18
+    restart: always
+    container_name: database
+    ports:
+      - 5432:5432
+    environment:
+      - PGDATA=/usr/app/database
+      - POSTGRES_USER=Mio
+      - POSTGRES_PASSWORD=MioAkiyama
+      - POSTGRES_DB=shortener
+    volumes:
+      - database_vol:/usr/app/database
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8080:8080
+    depends_on:
+      - database
+
+volumes:
+  database_vol:

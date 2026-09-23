@@ -8,4 +8,7 @@ require (
 	github.com/pelletier/go-toml/v2 v2.4.3
 )
 
-require github.com/lib/pq v1.12.3 // indirect
+require (
+	github.com/google/uuid v1.6.0
+	github.com/lib/pq v1.12.3
+)

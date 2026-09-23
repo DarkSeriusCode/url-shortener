@@ -4,7 +4,7 @@ env = "local"
 storage = "postgres"
 
 [database]
-host = "localhost"
+host = "database"
 port = 5432
 user = "Mio"
 password = "MioAkiyama"
