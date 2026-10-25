@@ -30,8 +30,8 @@ func setupLogger(env config.ServerEnv) {
 	slog.SetDefault(logger)
 }
 
-func initStorage(cfg *config.ServerConfig) storage.Storage {
-	var s storage.Storage
+func initStorage(cfg *config.ServerConfig) storage.URLStorage {
+	var s storage.URLStorage
 	var err error
 
 	switch cfg.Server.Storage {

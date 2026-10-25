@@ -11,7 +11,7 @@ var (
 	ErrNotFound StorageErr = errors.New("Not found")
 )
 
-type Storage interface {
+type URLStorage interface {
 	SaveUrl(originURL url.URL, urlID string) error
 	GetUrl(urlID string) (*ShortenedURL, error)
 }

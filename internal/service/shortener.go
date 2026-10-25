@@ -11,10 +11,10 @@ import (
 )
 
 type Shortener struct {
-	appStorage storage.Storage
+	appStorage storage.URLStorage
 }
 
-func NewShortener(s storage.Storage) *Shortener {
+func NewShortener(s storage.URLStorage) *Shortener {
 	return &Shortener{
 		appStorage: s,
 	}
