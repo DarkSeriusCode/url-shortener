@@ -13,5 +13,6 @@ var (
 
 type URLStorage interface {
 	SaveUrl(originURL url.URL, urlID string) error
+	CheckExistance(originURL url.URL) (*ShortenedURL, error)
 	GetUrl(urlID string) (*ShortenedURL, error)
 }

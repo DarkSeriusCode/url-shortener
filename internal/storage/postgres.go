@@ -62,6 +62,23 @@ func (s *PostgresStorage) SaveUrl(originURL url.URL, urlID string) error {
 	return err
 }
 
+func (s *PostgresStorage) CheckExistance(originURL url.URL) (*ShortenedURL, error) {
+	shortenedURL := ShortenedURL{
+		OriginURL: &originURL,
+	}
+
+	err := s.db.QueryRow(`SELECT id, url_id FROM urls WHERE url = $1`, originURL.String()).Scan(
+		&shortenedURL.ID, &shortenedURL.UrlID,
+	)
+	if err == sql.ErrNoRows {
+		return nil, nil
+	}
+	if err != nil {
+		return nil, err
+	}
+	return &shortenedURL, nil
+}
+
 func (s *PostgresStorage) GetUrl(urlID string) (*ShortenedURL, error) {
 	var shortenedURL ShortenedURL
 	var rawURL string

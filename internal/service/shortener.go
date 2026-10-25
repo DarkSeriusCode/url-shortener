@@ -21,6 +21,16 @@ func NewShortener(s storage.URLStorage) *Shortener {
 }
 
 func (s *Shortener) Shorten(originURL url.URL) (string, error) {
+	// Check if that URL has already been shortened
+	savedURL, err := s.appStorage.CheckExistance(originURL)
+	if err != nil {
+		return "", err
+	}
+
+	if savedURL != nil {
+		return savedURL.UrlID, nil
+	}
+
 	id, err := uuid.NewRandom()
 	if err != nil {
 		slog.Error("Error generating UUID!")
