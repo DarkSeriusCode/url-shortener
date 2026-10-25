@@ -13,6 +13,7 @@ import (
 
 var (
 	indexHTML = template.Must(template.ParseFiles("ui/index.html"))
+	staticFiles = http.FileServer(http.Dir("ui/static/"))
 )
 
 type AppHandler struct {
@@ -34,6 +35,7 @@ func NewHandler(shortener *service.Shortener) *AppHandler {
 	mux.HandleFunc("/", h.mainPage)
 	mux.HandleFunc("/shorten", h.shorten)
 	mux.HandleFunc("/{id}", h.resolve)
+	mux.Handle("/static/", http.StripPrefix("/static", staticFiles))
 
 	return h
 }

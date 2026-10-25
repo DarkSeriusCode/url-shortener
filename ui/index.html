@@ -1,203 +1,31 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<html>
+    <head>
+        <title>Url Shortener</title>
+        <meta charset="utf-8">
+        <link rel="stylesheet" href="static/styles.css" />
+        <script src="static/script.js" defer></script>
+    </head>
+    <body>
+        <header class="header">
+            <h2 class="header-title">Url Shortener</h2>
+            <h4 class="header-moto">Hepls you to short your problems</h4>
+            <nav class="header-account">
+                <a id="sign_in_btn" class="account-btn" href="#">Sign In</a>
+                <a id="sign_up_btn" class="account-btn" href="#">Sign Up</a>
+            </nav>
+        </header>
 
-    <title>URL Shortener</title>
-
-    <style>
-        * {
-            box-sizing: border-box;
-        }
-
-        body {
-            margin: 0;
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-
-            font-family: Arial, sans-serif;
-            background: #f4f4f5;
-        }
-
-        .card {
-            width: 100%;
-            max-width: 500px;
-            padding: 32px;
-
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-        }
-
-        h1 {
-            margin-top: 0;
-            text-align: center;
-        }
-
-        .input-group {
-            display: flex;
-            gap: 10px;
-        }
-
-        input {
-            flex: 1;
-            padding: 12px;
-
-            border: 1px solid #ccc;
-            border-radius: 6px;
-
-            font-size: 16px;
-        }
-
-        input:focus {
-            outline: none;
-            border-color: #555;
-        }
-
-        button {
-            padding: 12px 20px;
-
-            border: none;
-            border-radius: 6px;
-
-            background: #222;
-            color: white;
-
-            font-size: 16px;
-            cursor: pointer;
-        }
-
-        button:hover {
-            background: #444;
-        }
-
-        button:disabled {
-            background: #888;
-            cursor: not-allowed;
-        }
-
-        #result {
-            display: none;
-            margin-top: 24px;
-            padding: 15px;
-
-            text-align: center;
-            background: #f0fdf4;
-            border-radius: 6px;
-        }
-
-        #result a {
-            color: #166534;
-            font-weight: bold;
-        }
-
-        #error {
-            display: none;
-            margin-top: 16px;
-
-            color: #dc2626;
-            text-align: center;
-        }
-    </style>
-</head>
-
-<body>
-
-<div class="card">
-    <h1>URL Shortener</h1>
-
-    <div class="input-group">
-        <input
-            id="urlInput"
-            type="url"
-            placeholder="https://example.com"
-            required
-        >
-
-        <button id="shortenButton">
-            Short
-        </button>
-    </div>
-
-    <div id="result">
-        Shortened URL:
-        <br>
-        <a id="shortUrl" href="#" target="_blank"></a>
-    </div>
-
-    <div id="error"></div>
-</div>
-
-<script>
-    const urlInput = document.getElementById("urlInput");
-    const shortenButton = document.getElementById("shortenButton");
-    const result = document.getElementById("result");
-    const shortUrl = document.getElementById("shortUrl");
-    const error = document.getElementById("error");
-
-    async function shortenUrl() {
-        const url = urlInput.value.trim();
-
-        result.style.display = "none";
-        error.style.display = "none";
-
-        if (!url) {
-            showError("Please enter a URL");
-            return;
-        }
-
-        shortenButton.disabled = true;
-        shortenButton.textContent = "Shortening...";
-
-        try {
-            const response = await fetch("/shorten", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({
-                    url: url
-                })
-            });
-
-            if (!response.ok) {
-                throw new Error("Failed to shorten URL");
-            }
-
-            const data = await response.json();
-
-            const shortenedUrl =
-                window.location.origin + "/" + data.id;
-
-            shortUrl.href = shortenedUrl;
-            shortUrl.textContent = shortenedUrl;
-
-            result.style.display = "block";
-
-        } catch (err) {
-            showError(err.message);
-        } finally {
-            shortenButton.disabled = false;
-            shortenButton.textContent = "Short";
-        }
-    }
-
-    function showError(message) {
-        error.textContent = message;
-        error.style.display = "block";
-    }
-
-    shortenButton.addEventListener("click", shortenUrl);
-
-    urlInput.addEventListener("keydown", (event) => {
-        if (event.key === "Enter") {
-            shortenUrl();
-        }
-    });
-</script>
-
-</body>
+        <main>
+            <div class="shortener-container">
+                <h2 class="shortener-header">Shorten the URL</h2>
+                <div class="shortener-form">
+                    <input type="url" name="url" id="url-input" placeholder="Put your URL here" />
+                    <button id="url-submit">Shorten</button>
+                </div>
+                <a id="url-id" target="_blank"></a>
+                <h3 id="url-id-error">Service is temporary unavailable</h3>
+            </div>
+        </main>
+    </body>
 </html>
